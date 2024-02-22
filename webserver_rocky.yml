@@ -2,6 +2,8 @@
 - hosts: rocky
   user: sysadmin
   become: true
+  vars_files:
+  - ./vars/variables.yml
 
   tasks:
 
@@ -17,13 +19,14 @@
       enabled: true
 
   - name: Enable firewall ports
-    ansible.posfix.firewalld:
-      service:
-        - http
-        - https
+    ansible.posix.firewalld:
+      service: "{{ item }}"
       permanent: true
       state: enabled
       immediate: true
+    loop:
+      - http
+      - https
 
   - name: Install custom index.html w/template
     ansible.builtin.template:
